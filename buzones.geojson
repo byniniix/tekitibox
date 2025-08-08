@@ -1,0 +1,77 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 1,
+        "nombre": "Buzón de Santa #1 - Centro",
+        "estado": "Disponible"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-100.4551, 25.6726]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 2,
+        "nombre": "Buzón de Santa #2 - La Fama",
+        "estado": "Ocupado"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-100.4589, 25.6802]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 3,
+        "nombre": "Buzón de Santa #3 - Puerta Mitras",
+        "estado": "Disponible"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-100.4493, 25.6885]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 4,
+        "nombre": "Buzón de Santa #4 - Rincón de Santa Catarina",
+        "estado": "Ocupado"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-100.4698, 25.6830]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 5,
+        "nombre": "Buzón de Santa #5 - Privadas la Huasteca",
+        "estado": "Disponible"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-100.4832, 25.6782]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 6,
+        "nombre": "Buzón de Santa #6 - Colinas de Santa Catarina",
+        "estado": "Ocupado"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-100.4756, 25.6874]
+      }
+    }
+  ]
+}
