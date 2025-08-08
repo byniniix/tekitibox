@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tekiti Box</title>
+    <!-- Enlace al archivo CSS externo -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-gradient-to-br from-yellow-400 to-orange-600 min-h-screen flex flex-col items-center p-4"></body>
+
+
+<!-- Header / Navbar -->
+<header class="w-full max-w-4xl bg-white bg-opacity-90 rounded-2xl shadow-xl p-6 mb-8 flex flex-col md:flex-row justify-between items-center">
+    <div class="flex items-center mb-4 md:mb-0">
+        <div class="text-4xl font-extrabold text-red-700">TEKITI BOX</div>
+    </div>
+    <nav class="flex flex-wrap justify-center gap-4">
+        <button id="navHome" class="px-5 py-2 bg-green-600 text-white rounded-full hover:bg-green-700 transition duration-300 shadow-md">Inicio</button>
+        <button id="navAbout" class="px-5 py-2 bg-green-600 text-white rounded-full hover:bg-green-700 transition duration-300 shadow-md">Acerca de Nosotros</button>
+        <div id="auth-buttons" class="flex flex-wrap justify-center gap-4">
+            <!-- Buttons will be dynamically loaded here by JavaScript -->
+        </div>
+    </nav>
+</header>
+
+    <!-- Main Content Area -->
+    <main id="app-content" class="w-full max-w-4xl bg-white bg-opacity-90 rounded-2xl shadow-xl p-8 flex flex-col items-center justify-center min-h-[60vh]">
+        <!-- Content will be dynamically loaded here by JavaScript -->
+    </main>
+
+    <!-- Modals -->
+    <!-- Object Modal -->
+    <div id="objectModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeObjectModalBtn">&times;</span>
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">Subir Objeto</h2>
+            <form id="addObjectForm" class="space-y-4">
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="newObjectName">Nombre del objeto</label>
+                    <input type="text" id="newObjectName" class="shadow appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="newObjectExchange">Objeto para intercambio</label>
+                    <input type="text" id="newObjectExchange" class="shadow appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="newObjectLocation">Ubicación</label>
+                    <input type="text" id="newObjectLocation" class="shadow appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="newObjectImage">URL de la Imagen (opcional)</label>
+                    <input type="url" id="newObjectImage" class="shadow appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <button type="submit" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-full focus:outline-none focus:shadow-outline transition duration-300 shadow-md">Subir Objeto</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Object Details Modal -->
+    <div id="objectDetailsModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeObjectDetailsModalBtn">&times;</span>
+            <div id="objectDetailsContent"></div>
+            <button id="reportPublicationBtn" class="mt-4 px-5 py-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition duration-300 shadow-md">Reportar Publicación</button>
+        </div>
+    </div>
+
+    <!-- Report Modal -->
+    <div id="reportModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeReportModalBtn">&times;</span>
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">Reportar Publicación</h2>
+            <form id="reportForm" class="space-y-4">
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="reportReason">Razón del reporte</label>
+                    <textarea id="reportReason" class="shadow appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500" rows="4" required></textarea>
+                </div>
+                <button type="submit" class="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-6 rounded-full focus:outline-none focus:shadow-outline transition duration-300 shadow-md">Enviar Reporte</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Location Modal (for Map) -->
+     <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+<link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
+     <div id="locationModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close-button" id="closeLocationModalBtn">&times;</span>
+        <div id="locationDetailsContent"></div>
+    </div>
+</div>
+        </div>
+    
+            <!-- prettier-ignore -->
+    <script>(g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${
+    c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})
+        ({key: "AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg", v: "weekly"});</script>
+</body>
+</html>
+        </div>
+    </div>
+
+
+    <!-- Help Modal -->
+    <div id="helpModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeHelpModalBtn">&times;</span>
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">Obtener Ayuda</h2>
+            <p class="text-lg text-gray-700 mb-4">Si necesitas ayuda, puedes contactarnos a través de los siguientes números:</p>
+            <ul class="list-disc list-inside text-gray-700 space-y-2">
+                <li>+52 9338423</li>
+                <li>+52 8234663</li>
+                <li>8238436238</li>
+                <li>3848269464</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Policy Modal -->
+    <div id="policyModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closePolicyModalBtn">&times;</span>
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">Políticas de Privacidad y Términos de Uso</h2>
+            <p class="text-gray-700 text-sm mb-2">Última actualización: 30 de junio de 2025</p>
+            <p class="text-gray-700 text-base mb-4">
+                Tekiti Box es una plataforma para publicar, buscar y concretar intercambios de objetos de
+                manera gratuita entre personas. Los usuarios pueden ofrecer productos, indicar qué
+                desean a cambio y comunicarse con otros para realizar el intercambio. El uso de dinero no
+                está permitido en esta plataforma.
+            </p>
+            <h3 class="text-xl font-semibold mb-2 text-gray-800">2.1 Información que recopilamos</h3>
+            <ul class="list-disc list-inside text-gray-700 text-base mb-4">
+                <li>Nombre de usuario (puede ser alias)</li>
+                <li>Correo electrónico (oculto a otros usuarios)</li>
+                <li>Ubicación aproximada (opcional, configurable)</li>
+                <li>Fotografías de los objetos publicados</li>
+                <li>Historial de intercambios realizados</li>
+            </ul>
+            <h3 class="text-xl font-semibold mb-2 text-gray-800">2.2 Cómo se utiliza la información</h3>
+            <ul class="list-disc list-inside text-gray-700 text-base mb-4">
+                <li>Para mostrar publicaciones relevantes cerca del usuario</li>
+                <li>Para facilitar la comunicación entre usuarios dentro de la app</li>
+                <li>Para mejorar la experiencia de navegación</li>
+            </ul>
+            <h3 class="text-xl font-semibold mb-2 text-gray-800">2.3 Compartir información</h3>
+            <p class="text-gray-700 text-base mb-4">
+                Tu información no será compartida con terceros sin tu consentimiento.
+            </p>
+        </div>
+    </div>
+
+    <!-- Info Modal -->
+    <div id="infoModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeInfoModalBtn">&times;</span>
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">Información de la App</h2>
+            <p class="text-gray-700 text-base mb-2"><strong>Nombre de la App:</strong> Tekiti Box</p>
+            <p class="text-gray-700 text-base mb-2"><strong>Versión actual:</strong> 1.0.0</p>
+            <p class="text-gray-700 text-base mb-2"><strong>Última actualización:</strong> 30 de junio de 2025</p>
+            <p class="text-gray-700 text-base mb-2"><strong>Desarrollador:</strong> Equipo Tekini Box</p>
+            <p class="text-700 text-base mb-2"><strong>Correo de contacto:</strong> soporte@TekiniBox.app</p>
+            <p class="text-gray-700 text-base mb-4"><strong>Sitio web oficial:</strong> www.TekiniBox.app</p>
+            <h3 class="text-xl font-semibold mb-2 text-gray-800">¿Cómo funciona?</h3>
+            <ul class="list-disc list-inside text-gray-700 text-base mb-4">
+                <li>Publica lo que quieres intercambiar y qué te interesa recibir.</li>
+                <li>Explora publicaciones de otras personas cerca de ti.</li>
+                <li>Propón un intercambio o espera a que alguien te contacte.</li>
+                <li>Coordina el intercambio a través del chat seguro de la app.</li>
+            </ul>
+            <h3 class="text-xl font-semibold mb-2 text-gray-800">Requisitos de la app</h3>
+            <ul class="list-disc list-inside text-gray-700 text-base">
+                <li>Sistema operativo: Android 8.0 / iOS 12 o superior</li>
+                <li>Conexión a internet</li>
+                <li>Cuenta de usuario verificada</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Blocked Users Modal -->
+    <div id="blockedUsersModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeBlockedUsersModalBtn">&times;</span>
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">Usuarios Bloqueados</h2>
+            <ul id="blockedUsersList" class="list-disc list-inside text-gray-700 mb-4">
+                <!-- Blocked users will be listed here -->
+            </ul>
+            <div class="space-y-2">
+                <input type="text" id="blockUserIdInput" placeholder="ID de usuario a bloquear" class="shadow appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <button id="blockUserBtn" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-6 rounded-full focus:outline-none focus:shadow-outline transition duration-300 shadow-md">Bloquear Usuario</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div id="changePasswordModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeChangePasswordModalBtn">&times;</span>
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">Cambiar Contraseña</h2>
+            <form id="changePasswordForm" class="space-y-4">
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="currentPassword">Contraseña Actual</label>
+                    <input type="password" id="currentPassword" class="shadow appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="newPassword">Nueva Contraseña</label>
+                    <input type="password" id="newPassword" class="shadow appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-full focus:outline-none focus:shadow-outline transition duration-300 shadow-md">Actualizar Contraseña</button>
+            </form>
+            <p id="passwordChangeMessage" class="text-sm mt-2 text-center"></p>
+        </div>
+    </div>
+
+    <!-- Enlace al archivo JavaScript externo -->
+    <script src="script.js"></script>
+</body>
+</html>
